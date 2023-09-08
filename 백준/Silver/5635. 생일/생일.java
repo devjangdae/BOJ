@@ -1,9 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Comparator;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
+import java.util.*;
 
 class Student {
     String name;
@@ -17,41 +15,52 @@ class Student {
     }
 }
 
-public class Main {
+class Main {
+    static Comparator<Integer> comp = new Comparator<Integer>() {
+
+        @Override
+        public int compare(Integer o1, Integer o2) {
+            return -(o1 - o2);
+        }
+    };
+
+    static Comparator<Student> comp2 = new Comparator<Student>() {
+        @Override
+        public int compare(Student o1, Student o2) {
+            if (o1.year != o2.year) {
+                return -(o1.year - o2.year);
+            } else if (o1.month != o2.month) {
+                return -(o1.month - o2.month);
+            } else {
+                return -(o1.day - o2.day);
+            }
+        }
+    };
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(br.readLine());
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
 
-        // 나이를 비교하는 Comparator 정의
-        Comparator<Student> ageComparator = new Comparator<Student>() {
-            @Override
-            public int compare(Student s1, Student s2) {
-                if(s1.year != s2.year){
-                    return -Integer.compare(s1.year, s2.year);
-                }
-                if(s1.month != s2.month){
-                    return -Integer.compare(s1.month, s2.month);
-                }
-                return -Integer.compare(s1.day, s2.day);
-            }
-        };
+        //List<Student> arr = new ArrayList<Student>(); -- 리스트 말고 트리셋 사용
+        TreeSet<Student> ts = new TreeSet<>(comp2);
 
-        TreeSet<Student> students = new TreeSet<>(ageComparator);
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine());
 
-        for(int i = 0; i < n; i++){
-            StringTokenizer st = new StringTokenizer(br.readLine());
             String name = st.nextToken();
             int day = Integer.parseInt(st.nextToken());
             int month = Integer.parseInt(st.nextToken());
             int year = Integer.parseInt(st.nextToken());
-            students.add(new Student(name, day, month, year));
+
+            Student s = new Student(name, day, month, year);
+
+            //arr.add(s);
+            ts.add(s);
         }
 
-        Student youngestPerson = students.first();
-        Student oldestPerson = students.last();
-
-        System.out.println(youngestPerson.name);  // 가장 나이가 적은 사람의 이름 출력
-        System.out.println(oldestPerson.name);     // 가장 나이가 많은 사람의 이름 출력
+        System.out.println(ts.first().name);
+        System.out.println(ts.last().name);
 
     }
 }
